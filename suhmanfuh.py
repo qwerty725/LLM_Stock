@@ -15,3 +15,5 @@ if __name__ == '__main__':
     print(test.price)
     median(25)
     Stock()
+
+    asdf
