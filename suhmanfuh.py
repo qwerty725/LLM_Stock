@@ -1,3 +1,8 @@
+import json
+import csv
+import requests
+from bs4 import BeautifulSoup
+
 def median(pool):
     copy = sorted(pool)
     size = len(copy)
@@ -13,7 +18,9 @@ class Stock():
 if __name__ == '__main__':
     test = Stock("sam", 25)
     print(test.price)
-    median(25)
-    Stock()
-
-    asdf
+    stock_list = []
+    f = open("spy500.csv",'r')
+    reader = csv.reader(f,delimiter=',')
+    for line in reader:
+        stock_list.append(line[0])
+    print(stock_list[:10])
