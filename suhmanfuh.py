@@ -16,36 +16,45 @@ class Stock():
         self.price = price
 
     def scrape(self):
-        # Make a request to the Google Finance website
-        # url='https://www.bbc.com/news'
-        # response = requests.get(url)
-
-        # soup = BeautifulSoup(response.text, 'html.parser')
-        # headlines = soup.find('body').find_all('h3')
-        # for x in headlines:
-        #     print(x.text.strip())
-
-
-        url = "https://finance.google.com/"
+        url='https://www.bbc.com/news'
         response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        headlines = soup.find('body').find_all('h3')
+        news_headlines = []
+        for x in headlines:
+            news_headlines.append(x.text.strip())
+        return news_headlines
 
-        # Parse the HTML response
-        soup = BeautifulSoup(response.content, "html.parser")
 
-        # Find all the headline elements that contain the word "hours ago"
-       # headlines = soup.find('body')
-        headlines = soup.find_all("div")
-            
-        # find_all("Yfwt5")
-        # soup.find_all("Yfwt5")
-                                 #  class_="story-title", text=lambda text: text.find("hours ago") != -1)
-       # soup.find('body').find_all(
+        # url = "https://www.google.com/finance/"
+        # response = requests.get(url)
+        # soup = BeautifulSoup(response.text, "html.parser")
+        # headlines = soup.find('body').find_all('div', class_='Yfwt5')
+        # for headline in headlines:
+        #     print(headline.text.strip())
 
-        # Print the headlines
-        for headline in headlines:
-            if "Yfwt5" in headline.class_:
-                  print(headline.text.strip())
-    
+    def headlines_with_company(self, spy_input_file, news_headlines, spy_output_file):
+        company_names = set()
+
+        # Read the input .csv file and extract company names
+        with open(spy_input_file, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader)  # Skip header row
+            for row in reader:
+                company_names.update(row[1])
+
+        # Search for matching headlines
+        matching_headlines = []
+        for headline in news_headlines:
+            for company_name in company_names:
+                if company_name.lower() in headline.lower():
+                    matching_headlines.append([company_name] + [headline])
+
+        # Write the matching headlines to the output .csv file
+        with open(spy_output_file, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerows(matching_headlines)
+
 if __name__ == '__main__':
     test = Stock("sam", 25)
     print(test.price)
@@ -55,4 +64,5 @@ if __name__ == '__main__':
     for line in reader:
         stock_list.append(line[0])
     print(stock_list[:10])
-    test.scrape()
+    news_headlines = test.scrape()
+    test.headlines_with_company("spy500.csv", news_headlines, "headlines_with_company.csv")
