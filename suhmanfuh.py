@@ -34,20 +34,20 @@ class Stock():
         #     print(headline.text.strip())
 
     def headlines_with_company(self, spy_input_file, news_headlines, spy_output_file):
-        company_names = set()
+        company_names = []
 
         # Read the input .csv file and extract company names
         with open(spy_input_file, 'r') as csvfile:
             reader = csv.reader(csvfile)
             next(reader)  # Skip header row
             for row in reader:
-                company_names.update(row[1])
+                company_names.append(row[1])
 
         # Search for matching headlines
         matching_headlines = []
         for headline in news_headlines:
             for company_name in company_names:
-                if company_name.lower() in headline.lower():
+                if company_name.lower() in headline.lower.split():
                     matching_headlines.append([company_name] + [headline])
 
         # Write the matching headlines to the output .csv file
@@ -65,4 +65,5 @@ if __name__ == '__main__':
         stock_list.append(line[0])
     print(stock_list[:10])
     news_headlines = test.scrape()
+    print(news_headlines)
     test.headlines_with_company("spy500.csv", news_headlines, "headlines_with_company.csv")
